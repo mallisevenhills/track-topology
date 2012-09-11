@@ -2,5 +2,28 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.track</groupId>
   <artifactId>track-parent</artifactId>
+  <packaging>pom</packaging>
   <version>0.0.1-SNAPSHOT</version>
+  
+  <modules>
+		<module>track-database</module>
+		<module>track-request</module>
+	</modules>
+	
+	<dependencyManagement>
+	<dependencies>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>track-database</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>track-request</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+	</dependencies>		
+	
+	</dependencyManagement>
 </project>
