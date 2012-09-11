@@ -1,7 +1,118 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.db.changelogs</groupId>
-  <artifactId>track-database</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <name>track-database</name>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<modelVersion>4.0.0</modelVersion>
+
+<groupId>com.db.changelogs</groupId>
+<artifactId>track-database</artifactId>
+<version>1.0-SNAPSHOT</version>
+<packaging>jar</packaging>
+
+<name>track-database</name>
+<url>http://maven.apache.org</url>
+
+<properties>
+	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	<database.driver>com.mysql.jdbc.Driver</database.driver>
+	<database.url><![CDATA[jdbc:mysql://localhost:3306/${database.name}?characterEncoding=UTF-8&amp;characterSetResults=UTF-8]]></database.url>
+	<database.root.username>root</database.root.username>		        
+	<!-- Override these properties in your local settings.xml or command line if you want -->
+	<database.name>agile_db</database.name>
+	<database.username>agile</database.username>
+	<database.password>agile143</database.password>
+	<database.root.password>PSLVC21</database.root.password>
+	<deployment.environment>local</deployment.environment>
+	<mysql.connector.version>5.1.13</mysql.connector.version>
+</properties>
+
+<dependencies>
+</dependencies>
+
+<profiles>
+<profile>
+<id>database</id>
+<dependencies>
+<dependency>
+<groupId>mysql</groupId>
+<artifactId>mysql-connector-java</artifactId>
+<version>${mysql.connector.version}</version>
+</dependency>
+</dependencies>
+
+<build>
+	<plugins>
+	<!-- Use the SQL Plugin to Drop & Create the database initially -->
+		<plugin>
+			<groupId>org.codehaus.mojo</groupId>
+			<artifactId>sql-maven-plugin</artifactId>
+			<dependencies>
+				<dependency>
+				<groupId>mysql</groupId>
+				<artifactId>mysql-connector-java</artifactId>
+				<version>${mysql.connector.version}</version>
+				</dependency>
+			</dependencies>
+			<configuration>
+				<driver>${database.driver}</driver>
+				<url>${database.url}</url>
+				<username>${database.root.username}</username>
+				<password>${database.root.password}</password>
+			</configuration>
+
+			<executions>
+				<execution>
+				<id>drop-and-create-database</id>
+				<phase>clean</phase>
+				<goals>
+					<goal>execute</goal>
+				</goals>
+				<configuration>
+					<autocommit>true</autocommit>
+					<sqlCommand>
+					<![CDATA[
+					DROP DATABASE IF EXISTS ${database.name};
+					DROP USER '${database.username}'@'localhost';
+					CREATE DATABASE ${database.name} DEFAULT CHARACTER SET utf8;
+					CREATE USER '${database.username}'@'localhost' IDENTIFIED BY '${database.password}';
+					FLUSH PRIVILEGES;
+					GRANT ALL ON ${database.name}.* TO '${database.username}'@'%' IDENTIFIED BY '${database.password}' WITH GRANT OPTION;
+					GRANT ALL ON ${database.name}.* TO '${database.username}'@'localhost' IDENTIFIED BY '${database.password}' WITH GRANT OPTION;
+					]]>
+					</sqlCommand>
+				</configuration>
+				</execution>
+			</executions>
+		</plugin>
+
+
+		<plugin>
+			<groupId>org.liquibase</groupId>
+			<artifactId>liquibase-plugin</artifactId>
+			<executions>
+				<execution>
+				<phase>process-resources</phase>
+				<configuration>
+					<promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
+					<changeLogFile>src/main/db/changelogs/000-root-changelog.xml</changeLogFile>
+					<driver>${database.driver}</driver>
+					<url>${database.url}</url>
+					<username>${database.username}</username>
+					<password>${database.password}</password>
+					<contexts>
+					common,
+					test,
+					${deployment.environment}
+					</contexts>
+				</configuration>
+				<goals>
+					<goal>updateSQL</goal>
+					<goal>update</goal>
+				</goals>
+				</execution>
+			</executions>
+		</plugin>
+	</plugins>
+
+</build>
+</profile>
+</profiles>
 </project>
