@@ -8,7 +8,6 @@
   <modules>
 		<module>track-database</module>
 		<module>track-request</module>
-		<module>track-settings</module>
 	</modules>
 	
 	<dependencyManagement>
@@ -22,12 +21,6 @@
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>track-request</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>track-settings</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 	</dependencies>		
