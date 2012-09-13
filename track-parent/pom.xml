@@ -9,6 +9,7 @@
 		<module>track-database</module>
 		<module>track-request</module>
 		<module>track-settings</module>
+		 <module>track-domain</module>
 	</modules>
 	
 	<dependencyManagement>
@@ -30,6 +31,12 @@
 				<artifactId>track-settings</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			
+			 <dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>track-domain</artifactId>
+				<version>${project.version}</version>
+			</dependency> 
 	</dependencies>		
 	
 	</dependencyManagement>
